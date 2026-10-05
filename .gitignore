@@ -1,0 +1,7 @@
+﻿node_modules/
+dist/
+.local-state/
+.sites-runtime/
+.env
+.dev.vars
+*.log

@@ -1,20 +1,54 @@
-﻿# Aura Studio Warsaw — first website draft
+﻿# Aura Studio Warsaw
 
-Open dist/index.html in a browser to review the site locally.
+Complete full-stack studio website. All application source is in this folder.
 
-## Included
-- Responsive editorial layout; Polish/English language switch.
-- Two proposed paths: studio rental and sessions with a photographer.
-- Filterable gallery with keyboard-accessible image lightbox.
-- Booking enquiry composer with date validation, copy action and Instagram handoff.
-- Local FAQ chatbot. It does not use AI or claim access to live availability.
+## Run locally
 
-## Replace photographs
-Create dist/images and add your photographs there. In dist/app.js, replace the empty AURA.images.hero and AURA.images.studio values with image paths (for example images/studio-01.jpg). Add paths for each AURA.gallery entry and update its Polish and English caption. Empty or missing images retain explicit photo placeholders.
+Use Node 20 or newer.
 
-## Still needed for a production launch
-Confirm the two business offerings, service descriptions, exact address, pricing, equipment, booking/cancellation policies and photo captions. The creative copy and service categories are draft proposals, not independently verified company claims. Instagram blocked research access.
+    npm install
+    npm run build
+    npm run dev
 
-The booking form currently creates a message for the visitor to send on Instagram. It does not submit, store, or confirm bookings. Connect your actual booking provider to add live slots, confirmations and payments. Replace the FAQ helper with a server-backed AI integration if an AI chatbot is desired.
+Website: http://127.0.0.1:8787
+Admin: http://127.0.0.1:8787/admin
 
-No original note was changed. No form data is stored or transmitted by this draft.
+The local runner applies generated migrations and stores local database and photos under `.local-state`. Local admin access is allowed only on loopback hosts by the development runner. Production admin access is restricted to the configured owner email through Sites sign-in. Never enable LOCAL_DEV in production.
+
+## What works
+
+- Responsive minimalist photography site, Polish and English.
+- Database-backed studio details, prices, equipment, and booking terms.
+- Available-slot selection and persisted booking requests with reference numbers.
+- Atomic conflict protection: an active request holds its slot.
+- Admin confirmation, decline, and cancellation. Cancelling or declining reopens availability.
+- Admin calendar: publish slots, block and reopen them; overlapping slots are rejected.
+- Photo uploads to object storage, gallery filtering, lightbox, and hero/studio image selection.
+- Server-backed FAQ assistant using saved information and current availability.
+- Server-side admin authorization, same-origin write checks, booking/chat rate limits, input validation, and restricted photo formats.
+
+## Studio setup
+
+Open `/admin` while signed in as the Site owner. Upload real photos in Photography, set hero and studio images, save contact details and studio copy under Studio content, then publish actual bookable slots in Availability. Times use Europe/Warsaw.
+
+Requests are pending until the studio approves them. Contact customers using the email/phone links in the dashboard. This release does not send automatic emails, take payments, or call a generative AI provider. The chat assistant is explicitly labelled as a studio FAQ assistant.
+
+The two proposed offers are studio rental and photography sessions. Confirm these offers and replace creative copy with actual business details before a public launch. No prices, dates, fake bookings, or photographs are seeded into production. The original AURA STUDIO.txt note is preserved outside this folder.
+
+## Project map
+
+- `public/`: visitor and admin HTML, CSS, JavaScript, favicon.
+- `worker/index.js`: backend routes and business logic.
+- `db/schema.ts`: database schema.
+- `drizzle/`: generated production migrations and immutable history.
+- `scripts/build.mjs`: deterministic frontend/Worker build.
+- `scripts/dev.mjs`: persistent local database and photo storage runner.
+- `tests/`: real storage/API and frontend integration tests.
+- `.openai/hosting.json`: existing Site identity and D1/R2 bindings.
+
+## Validation
+
+    npm test
+    node scripts/validate-artifact.mjs
+
+12 integration checks cover actual local D1/R2 storage, concurrent bookings, authorization, cancellation, uploaded media, assistant responses, frontend submission/admin actions, and safe content rendering. DOM interaction tests do not perform screenshot or browser-layout validation.
