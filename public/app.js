@@ -24,3 +24,27 @@ function openChat(open){$('chat-panel').hidden=!open;$('chat-toggle').setAttribu
 let chatBusy=false;async function sendChat(message){if(chatBusy||!message.trim())return;chatBusy=true;addChat(message,true);$('chat-input').disabled=true;$('chat-form').querySelector('button').disabled=true;try{const data=await api('/api/chat',{method:'POST',body:JSON.stringify({message,language})});addChat(data.reply);if(data.action){const button=document.createElement('button');button.className='chat-action';button.textContent=data.action==='booking'?words('Przejdź do rezerwacji','Go to booking'):words('Otwórz Instagram','Open Instagram');button.addEventListener('click',()=>{if(data.action==='booking'){openChat(false);$('booking').scrollIntoView();$('service').focus();}else window.open('https://www.instagram.com/aura.studiowarsaw/','_blank','noopener,noreferrer');});$('chat-log').append(button);}}catch{addChat(words('Asystent jest chwilowo niedostępny. Spróbuj ponownie lub napisz do studia na Instagramie.','The assistant is temporarily unavailable. Try again or message the studio on Instagram.'));}finally{chatBusy=false;$('chat-input').disabled=false;$('chat-form').querySelector('button').disabled=false;if(!$('chat-panel').hidden)$('chat-input').focus();}}
 $('chat-toggle').addEventListener('click',()=>openChat($('chat-panel').hidden));$('chat-close').addEventListener('click',()=>openChat(false));$('chat-panel').addEventListener('keydown',event=>{if(event.key==='Escape')openChat(false);});$('chat-form').addEventListener('submit',event=>{event.preventDefault();const text=$('chat-input').value.trim();if(text&&!chatBusy){$('chat-input').value='';sendChat(text);}});document.querySelectorAll('[data-question]').forEach(button=>button.addEventListener('click',()=>sendChat(button.textContent)));
 translate();loadAvailability();api('/api/studio').then(data=>{studio=data.settings;photos=data.photos;renderContent();renderGallery();}).catch(()=>{const retry=document.createElement('button');retry.className='text-button';retry.textContent=words('Odśwież informacje studia','Reload studio information');retry.addEventListener('click',()=>location.reload());$('studio-contact').append(retry);});
+
+// Keep navigation aligned with the section in view, without overriding scrolling.
+if(typeof IntersectionObserver!=='undefined'){
+  const sectionObserver=new IntersectionObserver(entries=>{
+    for(const entry of entries){if(!entry.isIntersecting)continue;
+      document.querySelectorAll('header nav a').forEach(link=>{
+        if(link.getAttribute('href')==='#'+entry.target.id)link.setAttribute('aria-current','location');
+        else link.removeAttribute('aria-current');
+      });
+    }
+  },{rootMargin:'-20% 0px -55% 0px',threshold:0});
+  document.querySelectorAll('#studio,#sessions,#gallery,#contact').forEach(section=>sectionObserver.observe(section));
+}
+// Keyboard browsing follows the currently selected gallery category.
+$('lightbox').addEventListener('keydown',event=>{
+  if(event.key!=='ArrowLeft'&&event.key!=='ArrowRight')return;
+  const items=(photos.length?photos.map(photo=>({...photo,uploaded:true})):fallbackGallery).filter(item=>filter==='all'||item.category===filter);
+  if(!items.length||!currentLightbox)return;
+  event.preventDefault();
+  const index=items.findIndex(item=>item.id===currentLightbox.id);
+  currentLightbox=items[(index+(event.key==='ArrowRight'?1:-1)+items.length)%items.length];
+  $('lightbox-content').replaceChildren(makeSlot(currentLightbox));
+  $('lightbox-caption').textContent=currentLightbox['caption_'+language];
+});
