@@ -2,7 +2,7 @@
 // Frontend assets are embedded by scripts/build.mjs; no secrets enter browser code.
 export const defaults = {
  name:'Aura Studio Warsaw', instagram:'https://www.instagram.com/aura.studiowarsaw/',
- address:'', email:'', phone:'',
+ address:'', email:'aurastudiowarszawa@gmail.com', phone:'',
  heroPl:'Twój pomysł.', heroEn:'Your vision.', subtitlePl:'Nasza przestrzeń.', subtitleEn:'Our space.',
  descriptionPl:'Miejsce na światło, pomysły i kadry, które zostają. Poznaj Aura Studio Warsaw.', descriptionEn:'Room for light, ideas, and images that stay with you. Discover Aura Studio Warsaw.',
  studioPl:'Planujesz sesję, kampanię lub własny projekt? Opowiedz nam o swojej wizji. Ustalimy, jak najlepiej przygotować studio do Twojej pracy.', studioEn:'Planning a shoot, a campaign, or a personal project? Tell us your vision. Together, we will prepare the studio for your shoot.',
