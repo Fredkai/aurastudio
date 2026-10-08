@@ -19,8 +19,8 @@ The local runner applies generated migrations and stores local database and phot
 
 - Responsive minimalist photography site, Polish and English.
 - Database-backed studio details, prices, equipment, and booking terms.
-- Available-slot selection and persisted booking requests with reference numbers.
-- Atomic conflict protection: an active request holds its slot.
+- Day, start-time and duration selection with persisted booking requests and reference numbers. Studio rental is 150 PLN/hour for 1-24 whole hours within one day; photography is 150 PLN/30 minutes or 250 PLN/hour.
+- Atomic conflict protection across both services: an active request holds its entire time range. The public monthly calendar returns only booked/blocked time ranges, never customer details.
 - Admin confirmation, decline, and cancellation. Cancelling or declining reopens availability.
 - Admin calendar: publish slots, block and reopen them; overlapping slots are rejected.
 - Photo uploads to object storage, gallery filtering, lightbox, and hero/studio image selection.
@@ -29,11 +29,11 @@ The local runner applies generated migrations and stores local database and phot
 
 ## Studio setup
 
-Open `/admin` while signed in as the Site owner. Upload real photos in Photography, set hero and studio images, save contact details and studio copy under Studio content, then publish actual bookable slots in Availability. Times use Europe/Warsaw.
+Open `/admin` while signed in as the Site owner. Upload real photos in Photography, set hero and studio images, save contact details and studio copy under Studio content, manage blocked times in Availability and confirm or decline requests under Bookings. Visitors can request any future unoccupied time without prepublished slots. Times use Europe/Warsaw; green means available to request, red means booked/blocked, and dark means selected. Bookings require studio confirmation, so displayed free hours are not a promise of studio opening hours.
 
 Requests are pending until the studio approves them. Contact customers using the email/phone links in the dashboard. This release does not send automatic emails, take payments, or call a generative AI provider. The chat assistant is explicitly labelled as a studio FAQ assistant.
 
-The two proposed offers are studio rental and photography sessions. Confirm these offers and replace creative copy with actual business details before a public launch. No prices, dates, fake bookings, or photographs are seeded into production. The original AURA STUDIO.txt note is preserved outside this folder.
+The confirmed offers are studio rental and photography sessions at the rates above. No sample bookings or availability are seeded into production. The original AURA STUDIO.txt note is preserved outside this folder.
 
 ## Project map
 
@@ -51,4 +51,4 @@ The two proposed offers are studio rental and photography sessions. Confirm thes
     npm test
     node scripts/validate-artifact.mjs
 
-12 integration checks cover actual local D1/R2 storage, concurrent bookings, authorization, cancellation, uploaded media, assistant responses, frontend submission/admin actions, and safe content rendering. DOM interaction tests do not perform screenshot or browser-layout validation.
+16 integration checks cover actual local D1/R2 storage, concurrent bookings, authorization, cancellation, uploaded media, assistant responses, frontend submission/admin actions, and safe content rendering. DOM interaction tests do not perform screenshot or browser-layout validation.
