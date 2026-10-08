@@ -32,3 +32,23 @@ footer{background:var(--ink);color:var(--paper);padding:70px 5% 45px}footer .eye
 @media(max-width:640px){}
 
 .developer-credit{display:flex;justify-content:flex-end;align-items:center;gap:6px;margin-top:24px;padding-top:18px;border-top:1px solid #454c3e;color:var(--lime);font-family:Arial,Helvetica,sans-serif;font-style:normal;font-size:12px;line-height:1.55;letter-spacing:.3px}.developer-credit strong{color:inherit;font-family:inherit;font-style:normal;font-size:13px;font-weight:600;letter-spacing:.5px}.footer-bottom .logo img[src$="aura-footer-shield.png"]{width:150px;height:150px;object-fit:contain}@media(max-width:640px){.developer-credit{justify-content:flex-start;margin-top:28px;font-size:12px}.footer-bottom .logo img[src$="aura-footer-shield.png"]{width:130px;height:130px}}
+
+/* Continuous studio ribbon and photo motion. */
+.ticker{display:block;overflow:hidden;padding:24px 0}
+.ticker-track{display:flex;width:max-content;animation:aura-ticker 28s linear infinite}
+.ticker-group{display:flex;align-items:center;justify-content:space-around;gap:clamp(28px,5vw,90px);flex-shrink:0;min-width:100vw;padding-inline:clamp(14px,2.5vw,45px);white-space:nowrap}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes aura-ticker{to{transform:translateX(-50%)}}
+.gallery-item.gallery-reveal{opacity:0;transform:translateY(36px);transition:opacity .7s ease var(--reveal-delay,0ms),transform .8s var(--ease) var(--reveal-delay,0ms)}
+.gallery-item.gallery-reveal.is-visible{opacity:1;transform:translateY(0)}
+.gallery-item .photo-slot img{transition:transform .85s var(--ease)}
+.gallery-item:focus-visible .photo-slot img{transform:scale(1.045)}
+@media(hover:hover){.gallery-item:hover .photo-slot img{transform:scale(1.045)}}
+#lightbox[open]{animation:aura-lightbox .35s ease both}
+#lightbox[open]::backdrop{animation:aura-backdrop .35s ease both}
+#lightbox-content .photo-slot{animation:aura-photo .45s var(--ease) both}
+@keyframes aura-lightbox{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes aura-backdrop{from{opacity:0}to{opacity:1}}
+@keyframes aura-photo{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+@media(max-width:700px){.ticker{padding:20px 0}.ticker-group{min-width:650px}.ticker-track{animation-duration:24s}}
+@media(prefers-reduced-motion:reduce){.ticker-track{animation:none}.gallery-item.gallery-reveal{opacity:1;transform:none;transition:none}.gallery-item .photo-slot,.gallery-item .photo-slot img{transform:none!important}#lightbox[open],#lightbox-content .photo-slot{animation:none}}
