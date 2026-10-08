@@ -44,3 +44,15 @@ test('backend rate limits booking spam',async()=>{const responses=[];for(let i=0
 test('frontend assets, anchor targets and security headers',async()=>{for(const file of ['index.html','admin.html']){const html=readFileSync('public/'+file,'utf8');const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length,'duplicate IDs');for(const match of html.matchAll(/href="#([^"]+)"/g))assert(ids.includes(match[1]),'missing anchor '+match[1]);const js=readFileSync('public/'+(file==='index.html'?'app.js':'admin.js'),'utf8');for(const match of js.matchAll(/\$\('([^']+)'\)/g))assert(ids.includes(match[1]),'missing JS element '+match[1]);assert(!html.includes('<span</span>'));}const home=await request('/');assert.equal(home.status,200);assert.match(home.headers.get('content-security-policy'),/script-src 'self'/);assert.equal((await request('/app.js')).status,200);assert.equal((await request('/admin.js')).status,200);});
 
 test('bundled photos are served as intact JPEG images on public URLs',async()=>{for(const name of ['main-page','interior','green-studio','studio-lounge','portrait-session','orange-backdrop']){const response=await mf.dispatchFetch('http://localhost/assets/'+name+'.jpg');assert.equal(response.status,200);assert.equal(response.headers.get('content-type'),'image/jpeg');assert.deepEqual(Buffer.from(await response.arrayBuffer()),readFileSync('public/assets/'+name+'.jpg'));}const logo=await mf.dispatchFetch('http://localhost/assets/aura-logo.png');assert.equal(logo.status,200);assert.equal(logo.headers.get('content-type'),'image/png');assert.deepEqual(Buffer.from(await logo.arrayBuffer()),readFileSync('public/assets/aura-logo.png'));const head=await mf.dispatchFetch('http://localhost/assets/main-page.jpg',{method:'HEAD'});assert.equal(head.status,200);assert.equal((await head.arrayBuffer()).byteLength,0);});
+
+test('all 1-24 hour rentals save server-calculated totals and ignore client-supplied prices',async()=>{
+ const expected=new Map();
+ for(let hours=1;hours<=24;hours++){
+  const input=timedInput('2098-09-'+String(hours).padStart(2,'0')+'T00:00',hours*60);
+  const result=await timed({...input,totalPln:1,studioPerHour:1});
+  assert.equal(result.status,201,JSON.stringify(result.body));assert.equal(result.body.totalPln,hours*150);assert.equal(result.body.durationMinutes,hours*60);
+  expected.set(result.body.reference,hours);
+ }
+ const dashboard=await data('/api/admin/dashboard',{admin:true});
+ for(const [reference,hours] of expected){const saved=dashboard.body.bookings.find(b=>b.reference===reference);assert(saved);assert.equal(saved.totalPln,hours*150);assert.equal(saved.durationMinutes,hours*60);}
+});

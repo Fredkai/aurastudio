@@ -31,3 +31,20 @@ test('dedicated booking page offers thirty-minute and one-hour photography with 
  page.$('calendar-next').click();await waitFor(()=>!page.$('date').disabled,'next month');const day=page.document.querySelector('.calendar-day:not([disabled])');day.click();const date=day.dataset.date;page.document.querySelector('[data-start="'+date+'T09:30"]').click();assert.match(page.$('booking-summary').textContent,/09:30 - 10:00/);assert.equal(page.$('booking-submit').disabled,false);
  page.$('duration').value='60';page.$('duration').dispatchEvent(new page.window.Event('change'));assert.match(page.$('booking-summary').textContent,/250 PLN/);assert.equal(page.$('booking-submit').disabled,true,'Longer session overlaps the existing rental and clears the time');page.document.querySelector('[data-start="'+date+'T08:30"]').click();assert.match(page.$('booking-summary').textContent,/08:30 - 09:30/);assert.equal(page.document.querySelector('.hero'),null);
 });
+
+test('all rental durations display 150 PLN per hour on both booking routes and in both languages',async()=>{
+ for(const route of ['index','booking']){
+  const page=browser(route);await waitFor(()=>!page.$('date').disabled,'rental calendar loaded');
+  for(const language of ['pl','en']){
+   if(page.document.documentElement.lang!==language)page.$('language').click();
+   assert.equal(page.$('duration').options.length,24);
+   for(let hours=1;hours<=24;hours++){
+    page.$('duration').value=String(hours*60);page.$('duration').dispatchEvent(new page.window.Event('change'));
+    const total=hours*150,unit=language==='pl'?'godz.':'h';
+    assert(page.$('service-price').textContent.includes(`${hours} ${unit} × 150 PLN = ${total} PLN`),route+' price for '+hours+' hours');
+    assert(page.$('booking-summary').textContent.includes(`${hours} ${unit} × 150 PLN = ${total} PLN`),route+' summary for '+hours+' hours');
+    assert(Array.from(page.$('duration').options).find(o=>o.value===String(hours*60)).textContent.endsWith(`${total} PLN`));
+   }
+  }
+ }
+});
