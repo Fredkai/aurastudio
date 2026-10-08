@@ -17,19 +17,32 @@ The domain currently uses Hostinger nameservers. In its DNS zone, set the follow
 
 These records were returned by Sites for this exact domain. DNS and certificate verification are pending. After saving, refresh custom-domain status through Sites and confirm active HTTPS before sharing the domain.
 
-## Email
+## Free email forwarding
 
 Requested routing: info@aurastudiowarsaw.com -> aurastudiowarszawa@gmail.com
-No MX records were returned by the DNS check; email is not configured or verified.
+Use ImprovMX Free ($0): one domain, 25 aliases, up to 500 forwarded messages per day. No paid Hostinger mailbox is required. Keep the domain's existing Hostinger nameservers.
 
-1. In Hostinger Emails, activate the email service for aurastudiowarsaw.com if needed, then create the info mailbox. A domain purchase alone does not confirm an email plan exists.
-2. Use the mail provider's Connect domain instructions to add its actual MX, SPF, and DKIM records. Do not invent mail records or change the website A records.
-3. In Emails > aurastudiowarsaw.com > Forwarders > Create a forwarder, select info@aurastudiowarsaw.com and destination aurastudiowarszawa@gmail.com. Keep copies enabled.
-4. Open the verification email in aurastudiowarszawa@gmail.com and confirm the forwarder.
-5. Send a test from another email account to info@aurastudiowarsaw.com and verify delivery in Gmail.
-6. Once forwarding is verified, set the studio contact email to info@aurastudiowarsaw.com in /admin under Studio content. The website uses the existing Gmail address until then.
+1. Create or sign into a free account at https://app.improvmx.com/ and add aurastudiowarsaw.com.
+2. Add the alias info with destination aurastudiowarszawa@gmail.com and complete any email/account verification requested.
+3. In Hostinger > Domains > Domain Portfolio > aurastudiowarsaw.com > DNS / Nameservers > Manage DNS records, add the records below. Copy the domain's actual recommended values from the ImprovMX dashboard if they differ.
 
-Official forwarding instructions: https://www.hostinger.com/support/1583221-how-to-set-up-a-forwarder-for-hostinger-email/
+| Type | Name | Value | Priority |
+| --- | --- | --- | --- |
+| MX | @ | mx1.improvmx.com | 10 |
+| MX | @ | mx2.improvmx.com | 20 |
+| TXT | @ | v=spf1 include:spf.improvmx.com ~all | - |
+
+Only one SPF record may exist at the root. If an existing SPF record is present, merge the ImprovMX include into it rather than creating a second record. Remove other MX records only after confirming they are not supporting an existing mail service. Preserve the website A and verification TXT records.
+
+4. In ImprovMX, run the DNS check until it reports Email forwarding active.
+5. Send a test from another email account to info@aurastudiowarsaw.com and verify delivery in aurastudiowarszawa@gmail.com.
+6. Once verified, set the contact email in the studio admin to info@aurastudiowarsaw.com. The website currently displays Gmail until forwarding is working.
+
+This free setup forwards incoming messages. Sending as info through ImprovMX SMTP is not included in the Free plan.
+
+Status: prepared, not activated; account setup and DNS changes are still needed.
+Official pricing: https://www.improvmx.com/pricing/
+Official Hostinger guide: https://www.improvmx.com/guides/hostinger/
 
 ## Google reviews
 
