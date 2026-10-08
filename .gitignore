@@ -5,3 +5,6 @@ dist/
 .env
 .dev.vars
 *.log
+
+.env.*
+!.env.example
