@@ -1,18 +1,25 @@
-﻿{
-    "name":  "aura-studio-warsaw",
-    "version":  "1.0.0",
-    "private":  true,
-    "type":  "module",
-    "scripts":  {
-                    "build":  "node scripts/build.mjs",
-                    "dev":  "node scripts/dev.mjs",
-                    "test":  "node --test tests/backend.test.mjs tests/frontend.test.mjs",
-                    "db:generate":  "drizzle-kit generate"
-                },
-    "devDependencies":  {
-                            "drizzle-kit":  "^0.31.0",
-                            "drizzle-orm":  "^0.44.0",
-                            "linkedom":  "^0.18.12",
-                            "miniflare":  "^3.20250718.0"
-                        }
+{
+  "name": "aura-studio-warsaw",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/dev.mjs",
+    "test": "node --test tests/backend.test.mjs tests/frontend.test.mjs",
+    "db:generate": "drizzle-kit generate",
+    "start:cloud": "node cloud/vm.mjs"
+  },
+  "devDependencies": {
+    "drizzle-kit": "^0.31.0",
+    "drizzle-orm": "^0.44.0",
+    "linkedom": "^0.18.12"
+  },
+  "dependencies": {
+    "miniflare": "^4.20260426.0"
+  },
+  "overrides": {
+    "undici": "^7.29.1",
+    "ws": "^8.21.0"
+  }
 }
